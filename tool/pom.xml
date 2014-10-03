@@ -256,6 +256,9 @@
  in shared/lib, so you want the scope to be "provided".
 -->
 
+        <activation>
+            <activeByDefault>true</activeByDefault>
+        </activation>
         <repositories>
           <!-- 
                To enable YAFT, MNEME, and Assignments 2, uncomment the repository, dependencies and plugin below.
