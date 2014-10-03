@@ -201,7 +201,7 @@
     </bean>
 
     <bean class="org.sakaiproject.lessonbuildertool.tool.producers.IFrameWindowProducer" >
-		<property name="simpsalePageBean" ref="simplePageBean" />
+		<property name="simplePageBean" ref="simplePageBean" />
 		<property name="localeGetter" ref="requestLocaleProxy" />
     </bean>
     
