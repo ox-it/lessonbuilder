@@ -266,22 +266,10 @@
 
         <dependencies>
           <dependency>
-            <groupId>org.sakaiproject.yaft</groupId>
-            <artifactId>yaft-api</artifactId>
-            <version>${sakai.yaft.version}</version>
-            <scope>${sakai.yaft.scope}</scope>
-          </dependency>
-          <dependency>
             <groupId>org.etudes</groupId>
             <artifactId>etudes-mneme-api</artifactId>
             <version>${sakai.mneme.version}</version>
             <scope>${sakai.mneme.scope}</scope>
-          </dependency>
-          <dependency>
-            <groupId>org.sakaiproject.assignment2</groupId>
-            <artifactId>sakai-assignment2-api</artifactId>
-	    <version>${sakai.assignment2.version}</version>
-            <scope>${sakai.assignment2.scope}</scope>
           </dependency>
         </dependencies>
       </profile>
