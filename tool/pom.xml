@@ -259,21 +259,6 @@
         <activation>
             <activeByDefault>true</activeByDefault>
         </activation>
-        <repositories>
-          <!-- 
-               To enable YAFT, MNEME, and Assignments 2, uncomment the repository, dependencies and plugin below.
-               Look for all comment blocks that start with OPTIONAL. Remove that whole line, and the matching close
-            -->
-          <repository>
-            <id>local-hack</id>
-            <name>Backup API copies</name>
-            <layout>default</layout>
-            <url>https://sakai.rutgers.edu/stats/repos</url>
-            <snapshots>
-              <enabled>true</enabled>
-            </snapshots>
-          </repository>
-        </repositories>
 
 	<properties>
 	  <src1>opt-src</src1>
