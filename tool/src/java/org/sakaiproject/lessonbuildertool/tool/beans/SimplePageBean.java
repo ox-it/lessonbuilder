@@ -25,6 +25,7 @@
 package org.sakaiproject.lessonbuildertool.tool.beans;
 
 import java.text.SimpleDateFormat;
+import java.text.Format;
 import java.math.BigDecimal;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -86,6 +87,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.sakaiproject.lessonbuildertool.tool.beans.helpers.ResourceHelper;
+import au.com.bytecode.opencsv.CSVParser;
+
 /**
  * Backing bean for Simple pages
  * 
@@ -205,6 +208,7 @@ public class SimplePageBean {
     public String questionResponse;
 	
 	public boolean isWebsite = false;
+	public boolean isCaption = false;
 
 	private String linkUrl;
 
@@ -262,7 +266,8 @@ public class SimplePageBean {
 	private boolean peerEvalAllowSelfGrade;
 
     // almost ISO format. real thing can't be done until Java 7. uses -0400 rather than -04:00
-        SimpleDateFormat isoDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+    //        SimpleDateFormat isoDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+        SimpleDateFormat isoDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	
 	public void setPeerEval(boolean peerEval) {
 		this.peerEval = peerEval;
@@ -286,11 +291,12 @@ public class SimplePageBean {
 	}
 	
         // format comes back as 2014-05-27T16:15:00-04:00
-        // have to remove the colon to get Java to parse it
+	// if user's computer is on a different time zone, we want the UI to match 
+        // Sakai. Hence we really want to handle everything as local time.
+        // That means we want to ignore the time zone on input
 	public void setPeerEvalDueDate(String date){
 	    try {
-		if (date.substring(22,23).equals(":"))
-		    date = date.substring(0,22) + date.substring(23,25);
+		date = date.substring(0,19);
 		this.peerEvalDueDate = isoDateFormat.parse(date);
 	    } catch (Exception e) {
 		System.out.println(e + "bad format duedate " + date);
@@ -303,8 +309,7 @@ public class SimplePageBean {
 	
 	public void setPeerEvalOpenDate(String date) {
 	    try {
-		if (date.substring(22,23).equals(":"))
-		    date = date.substring(0,22) + date.substring(23,25);
+		date = date.substring(0,19);
 		this.peerEvalOpenDate = isoDateFormat.parse(date);
 	    } catch (Exception e) {
 		System.out.println(e + "bad format duedate " + date);
@@ -381,6 +386,81 @@ public class SimplePageBean {
 	public static class GroupEntry {
 	    public String name;
 	    public String id;
+	}
+
+	public static class BltiTool {
+	    public int id;
+	    public String title;
+	    public String description; // can be null
+	    public String addText;
+	    public String addInstructions; // can be null
+	}
+
+	public static Map<Integer,BltiTool> bltiTools = initBltiTools();
+
+	public static Map<Integer,BltiTool> initBltiTools() {
+	    String[] bltiToolLines = ServerConfigurationService.getStrings("lessonbuilder.blti_tools");
+	    if (bltiToolLines == null || bltiToolLines.length == 0)
+		return null;
+	    CSVParser csvParser = new CSVParser();
+	    Map<Integer,BltiTool> ret = new HashMap<Integer,BltiTool>();
+	    for (int i = 0; i < bltiToolLines.length; i++) {
+		String[] items = null;
+		try {
+		    items = csvParser.parseLine(bltiToolLines[i]);
+		} catch (Exception e) {
+		    System.out.println("bad blti tool spec in lessonbuilder.blti_tools " + i + " " + bltiToolLines[i]);		    
+		    continue;
+		}
+		if (items.length < 5) {
+		    System.out.println("bad blti tool spec in lessonbuilder.blti_tools " + i + " " + bltiToolLines[i]);
+		    continue;
+		}
+		BltiTool bltiTool = new BltiTool();
+		try {
+		    bltiTool.id = Integer.parseInt(items[0]);
+		} catch (Exception e) {
+		    System.out.println("first item in line not integer in lessonbuilder.blti_tools " + i + " " + bltiToolLines[i]);		    
+		    continue;
+		}
+		if (items[1] == null || items[1].length() == 0) {
+		    System.out.println("second item in line missing in lessonbuilder.blti_tools " + i + " " + bltiToolLines[i]);		    
+		    continue;
+		}
+		bltiTool.title = items[1];
+		// allow null but not zero length
+		if (items[2] == null || items[2].length() == 0)
+		    bltiTool.description = null;
+		else
+		    bltiTool.description = items[2];
+		if (items[3] == null || items[3].length() == 0) {
+		    System.out.println("third item in line missing in lessonbuilder.blti_tools " + i + " " + bltiToolLines[i]);		    
+		    continue;
+		}
+		bltiTool.addText = items[3];
+		// allow null but not zero length
+		if (items[4] == null || items[4].length() == 0)
+		    bltiTool.addInstructions = null;
+		else
+		    bltiTool.addInstructions = items[4];
+		ret.put(bltiTool.id, bltiTool);
+	    }
+	    for (BltiTool tool: ret.values()) {
+		System.out.println(tool.id + " " + tool.title + " " + tool.description + " " + tool.addText);
+	    }
+	    return ret;
+	}
+
+	public BltiTool getBltiTool(int i) {
+	    if (bltiTools == null)
+		return null;
+	    return bltiTools.get(i);
+	}
+
+	public Collection<BltiTool> getBltiTools() {
+	    if (bltiTools == null)
+		return null;
+	    return bltiTools.values();
 	}
 
     // Image types
@@ -495,6 +575,9 @@ public class SimplePageBean {
 
 
 	public void init () {	
+		TimeZone tz = TimeService.getLocalTimeZone();
+		isoDateFormat.setTimeZone(tz);
+
 		if (groupCache == null) {
 			groupCache = memoryService.newCache("org.sakaiproject.lessonbuildertool.tool.beans.SimplePageBean.groupCache");
 		}
@@ -622,15 +705,17 @@ public class SimplePageBean {
 	}
 
     // argument is in ISO8601 format, which has -04:00 time zone.
-    // unfortunately SimpleDateFormat can't handle that until Java 7, so we have to convert
-    // it to something that can be parsed
+    // if user's computer is on a different time zone, we want the UI to match 
+    // Sakai. Hence we really want to handle everything as local time.
+    // That means we want to ignore the time zone on input
 	public void setReleaseDate(String date) {
 	    if (date.equals(""))
 		this.releaseDate = null;
 	    else
 	    try {
-		if (date.substring(22,23).equals(":"))
-		    date = date.substring(0,22) + date.substring(23,25);
+		//  if (date.substring(22,23).equals(":"))
+		//    date = date.substring(0,22) + date.substring(23,25);
+		date = date.substring(0,19);
 		this.releaseDate = isoDateFormat.parse(date);
 	    } catch (Exception e) {
 		System.out.println(e + "bad format releasedate " + date);
@@ -768,6 +853,10 @@ public class SimplePageBean {
 
 	public void setWebsite(boolean isWebsite) {
 	    this.isWebsite = isWebsite;
+	}
+
+	public void setCaption(boolean isCaption) {
+	    this.isCaption = isCaption;
 	}
 
     // hibernate interposes something between us and saveItem, and that proxy gets an
@@ -986,15 +1075,19 @@ public class SimplePageBean {
 	}
 
 	public String processMultimedia() {
-	    return processResource(SimplePageItem.MULTIMEDIA, false);
+	    return processResource(SimplePageItem.MULTIMEDIA, false, false);
 	}
 
 	public String processResource() {
-	    return processResource(SimplePageItem.RESOURCE, false);
+	    return processResource(SimplePageItem.RESOURCE, false, false);
 	}
 
         public String processWebSite() {
-	    return processResource(SimplePageItem.RESOURCE, true);
+	    return processResource(SimplePageItem.RESOURCE, true, false);
+	}
+
+        public String processCaption() {
+	    return processResource(SimplePageItem.RESOURCE, false, true);
 	}
 
     // get mime type for a URL. connect to the server hosting
@@ -1043,7 +1136,7 @@ public class SimplePageBean {
 
     // return call from the file picker, used by add resource
     // the picker communicates with us by session variables
-	public String processResource(int type, boolean isWebSite) {
+	public String processResource(int type, boolean isWebSite, boolean isCaption) {
 		if (!canEditPage())
 		    return "permission-failed";
 
@@ -1096,8 +1189,21 @@ public class SimplePageBean {
 				// part 2, find the actual data type.
 				if (url != null)
 				    mimeType = getTypeOfUrl(url);
+			} else if (isCaption) {
+			    // sakai probably sees it as a normal text file.
+			    // some browsers require the mime type to be right
+				boolean pushed = false;
+				try {
+					pushed = pushAdvisor();
+					ContentResourceEdit res = contentHostingService.editResource(id);
+					res.setContentType("text/vtt");
+					contentHostingService.commitResource(res, NotificationService.NOTI_NONE);
+				} catch (Exception ignore) {
+					return "no-reference";
+				}finally {
+					if(pushed) popAdvisor();
+				}
 			}
-
 		} else {
 			return "cancel";
 		}
@@ -1151,7 +1257,12 @@ public class SimplePageBean {
 		}
 
 		SimplePageItem i;
-		if (itemId != null && itemId != -1) {  // updating existing item
+		if (itemId != null && itemId != -1 && isCaption) {
+			// existing item, add or change caption
+			i = findItem(itemId);
+			i.setAttribute("captionfile", id);
+
+		} else if (itemId != null && itemId != -1) {  // updating existing item
 			i = findItem(itemId);
 			
 			// editing an existing item which might have customized properties
@@ -1172,6 +1283,9 @@ public class SimplePageBean {
 				i.setDescription(description);
 			}
 			clearImageSize(i);
+			// with a new underlying file, it's hard to see how an old caption file
+			// could still be valid
+			i.removeAttribute("captionfile");
 		} else {  // adding new item
 			i = appendItem(id, (name != null ? name : split[split.length - 1]), type);
 			if (mimeType != null) {
@@ -5186,7 +5300,7 @@ public class SimplePageBean {
 	public String getCollectionId(boolean urls) {
 		String siteId = getCurrentPage().getSiteId();
 		String baseDir = ServerConfigurationService.getString("lessonbuilder.basefolder", null);
-	    
+		boolean hiddenDir = ServerConfigurationService.getBoolean("lessonbuilder.folder.hidden",false);
 		String pageOwner = getCurrentPage().getOwner();
 		String collectionId;
 		if (pageOwner == null) {
@@ -5195,6 +5309,24 @@ public class SimplePageBean {
 			    if (!baseDir.endsWith("/"))
 				baseDir = baseDir + "/";
 			    collectionId = collectionId + baseDir;
+			    // basedir which is hidden; have to create it if it doesn't exist, so we can make hidden
+			    if (hiddenDir) {
+				hiddenDir = false; // hiding base, done hide actual folder
+				try {
+				    try {
+					contentHostingService.checkCollection(collectionId);
+				    } catch (IdUnusedException idex) {
+					ContentCollectionEdit edit = contentHostingService.addCollection(collectionId);
+					edit.getPropertiesEdit().addProperty(ResourceProperties.PROP_DISPLAY_NAME,  Validator.escapeResourceName(baseDir.substring(0,baseDir.length()-1)));
+					edit.setHidden();
+					contentHostingService.commitCollection(edit);
+				    }
+				} catch (Exception ignore) {
+				    // I've been ignoring errors.
+				    // that will cause failure at a later stage where we can
+				    // return an error message. This may not be optimal.
+				}
+			    }
 			}
 		}else {
 			collectionId = "/user/" + getCurrentUserId() + "/stuff4/";
@@ -5222,12 +5354,14 @@ public class SimplePageBean {
 			try {
 				ContentCollectionEdit edit = contentHostingService.addCollection(root);
 				edit.getPropertiesEdit().addProperty(ResourceProperties.PROP_DISPLAY_NAME,  Validator.escapeResourceName(getPageTitle()));
+				if (hiddenDir)
+				    edit.setHidden();
 				contentHostingService.commitCollection(edit);
+				
 				// well, we got that far anyway
 				collectionId = root;
 			} catch (Exception ignore) {
 			}
-
 		}
 
 	    // now try creating what we want
@@ -5235,9 +5369,11 @@ public class SimplePageBean {
 	    	ContentCollectionEdit edit = contentHostingService.addCollection(folder);
 	    	if (urls)
 	    		edit.getPropertiesEdit().addProperty(ResourceProperties.PROP_DISPLAY_NAME, "urls");
-	    	else
+	    	else {
 	    		edit.getPropertiesEdit().addProperty(ResourceProperties.PROP_DISPLAY_NAME, Validator.escapeResourceName(getPageTitle()));
-		
+			if (hiddenDir)
+			    edit.setHidden();
+		}		
 	    	contentHostingService.commitCollection(edit);
 	    	return folder; // worked. use it
 		} catch (Exception ignore) {};
@@ -5357,7 +5493,10 @@ public class SimplePageBean {
 							  	Validator.escapeResourceName(base),
 							  	Validator.escapeResourceName(extension),
 							  	MAXIMUM_ATTEMPTS_FOR_UNIQUENESS);
-					res.setContentType(mimeType);
+					if (isCaption)
+					    res.setContentType("text/vtt");
+					else
+					    res.setContentType(mimeType);
 					res.setContent(file.getInputStream());
 					try {
 						contentHostingService.commitResource(res,  NotificationService.NOTI_NONE);
@@ -5411,16 +5550,26 @@ public class SimplePageBean {
 				}
 				
 				name = url;
-				String base = url;
-				String extension = "";
-				int i = url.lastIndexOf("/");
-				if (i < 0) i = 0;
-				i = url.lastIndexOf(".", i);
-				if (i > 0) {
-					extension = url.substring(i);
-					base = url.substring(0,i);
+				String basename = url;
+				// SAK-11816 method for creating resource ID
+				String extension = ".url";
+				if (basename != null && basename.length() > 32) {
+				    // lose the http first                              
+				    if (basename.startsWith("http:")) {
+					basename = basename.substring(7);
+				    } else if (basename.startsWith("https:")) {
+					basename = basename.substring(8);
+				    }
+				    if (basename.length() > 32) {
+					// max of 18 chars from the URL itself                      
+					basename = basename.substring(0, 18);
+					// add a timestamp to differentiate it (+14 chars)          
+					Format f= new SimpleDateFormat("yyyyMMddHHmmss");
+					basename += f.format(new Date());
+					// total new length of 32 chars                             
+				    }
 				}
-				
+
 				String collectionId;
 				SimplePage page = getCurrentPage();
 				
@@ -5429,7 +5578,7 @@ public class SimplePageBean {
 				try {
 					// 	urls aren't something people normally think of as resources. Let's hide them
 					ContentResourceEdit res = contentHostingService.addResource(collectionId, 
-							Validator.escapeResourceName(base),
+							Validator.escapeResourceName(basename),
 							Validator.escapeResourceName(extension),
 							MAXIMUM_ATTEMPTS_FOR_UNIQUENESS);
 					res.setContentType("text/url");
@@ -5476,6 +5625,13 @@ public class SimplePageBean {
 			} else if (itemId == -1) {
 				int seq = getItemsOnPage(getCurrentPageId()).size() + 1;
 				item = simplePageToolDao.makeItem(getCurrentPageId(), seq, SimplePageItem.RESOURCE, sakaiId, name);
+			} else if (isCaption) {
+				item = findItem(itemId);
+				if (item == null)
+					return;
+				item.setAttribute("captionfile", sakaiId);
+				update(item);
+				return;
 			} else {
 				item = findItem(itemId);
 				if (item == null)
@@ -5493,6 +5649,8 @@ public class SimplePageBean {
 				}
 			}
 			
+			// for new file, old captions don't make sense
+			item.removeAttribute("captionfile");
 			// remember who added it, for permission checks
 			item.setAttribute("addedby", getCurrentUserId());
 

@@ -60,6 +60,8 @@ setMainFrameHeight(window.name);
 <script type="text/javascript" language="JavaScript" rsf:id="redirect">
   location.href = document.getElementById("redirect-link").href;
 </script>
+<script type="text/javascript" src="$context/js/jquery.cluetip.min.js"></script>
+<link rel="stylesheet" href="$context/css/jquery.cluetip.css" type="text/css" />
 
 <script type="text/javascript" language="JavaScript">
 $(function() {
@@ -69,8 +71,32 @@ $(function() {
 	    // fake it; can't seem to get rid of underline though
 	    $('.usebutton').css('border', '1px solid black').css('padding', '1px 4px').css('color', 'black');
 	}
-
+	// don't do this twice. if portal is loaded portal will do it
+        if(typeof portal == 'undefined')
+	$('a.tool-directurl').cluetip({
+		local: true,
+		    arrows: true,
+		    cluetipClass: 'jtip',
+		    sticky: true,
+		    cursor: 'pointer',
+		    activation: 'click',
+		    closePosition: 'title',
+		    closeText: '<img src="/library/image/silk/cross.png" alt="close" />'
+		    });
 });
+
+function toggleShortUrlOutput(defaultUrl, checkbox, textbox) {
+    if($(checkbox).is(':checked')) {
+	$.ajax({
+		url:'/direct/url/shorten?path='+encodeURI(defaultUrl),
+		    success: function(shortUrl) {
+		    $('.'+textbox).val(shortUrl);
+		}
+	    });
+    } else {
+	$('.'+textbox).val(defaultUrl);
+    }
+}
 
 </script>
 
@@ -94,7 +120,7 @@ $(function() {
 		<br rsf:id="breakAfterWarnings" />
 
         <div role="navigation" class="neoPortletTitleWrap">
-            <div class="portletTitle">
+            <div class="portletTitle title-tools">
                 <div class="title">
                     <a href="#" rsf:id="resetbutton2" class="reload"><img rsf:id="resetimage2" src="/library/image/transparent.gif"/></a>
                     <span rsf:id="crumb:"><a href="#" rsf:id="crumb-link"></a><span rsf:id="crumb-follow"></span></span>
@@ -104,8 +130,17 @@ $(function() {
                 <div class="action">
                     
                     <span class="returnheader nextprev"><a href="#" rsf:id="prev" class="usebutton nextprev">prev</a><a href="#" rsf:id="next" class="usebutton nextprev">next</a></span>
+                    <a href="#" rsf:id="directurl" id="directurl" class="title-tools tool-directurl">
+                      <img rsf:id="directimage" src="/library/image/transparent.gif"/>
+	            </a>
+		    <div rsf:id="directurl-div" class="portlet title-tools direct-url-wrap">
+		      <input rsf:id="directurl-input" type="checkbox" class="portlet title-tools short-url"/>
+		      <span rsf:id="directurl-shorten">Short URL</span>
+		      <textarea rsf:id="directurl-textarea" class="portlet title-tools"></textarea>
+		    </div>
                     <a href="#" rsf:id="helpbutton2" target="_blank" class="help"><img rsf:id="helpimage2" src="/library/image/transparent.gif" /><span rsf:id="helpnewwindow2" class="offscreen"></span></a>
                 </div>
+            <div style="clear:both"> </div>
             </div>
         </div>
 
