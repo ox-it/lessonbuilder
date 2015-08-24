@@ -235,6 +235,7 @@ a.edit-link:link, a.edit-link:visited, a.itemLink:link, a.itemLink:visited, a.mu
 }
 .mainList li {
     position: relative;
+    margin-bottom: 15px!important;
 #    border:1px solid transparent
 #    padding:26px;
 #    margin: 15px 0;
@@ -315,7 +316,10 @@ a.edit-link:link, a.edit-link:visited, a.itemLink:link, a.itemLink:visited, a.mu
 	padding: 0px 4px !important;
 }
 .edit-col .ui-button-text, #submit-grading .ui-button-text, .portalmenu .ui-button-text {
-	font-size: 60%;
+	font-size: 12px !important;
+	font-weight:normal !important;
+	font-family:'PT Sans', 'Helvetica Neue', Arial, sans-serif;
+	padding:4px!important;
 	/*vertical-align: middle;*/
 }
 .buttonItem {
@@ -543,7 +547,7 @@ vertical-align:top;
     cursor:pointer;
 }
 .link-div .usebutton {
-	font-size: 160%
+	font-size: 160%;
 }
 .add-comment-button {
 	margin: 7px 0px 2px 0px
@@ -982,7 +986,7 @@ div[role="dialog"] {
  display: inline-block;
  position:relative;
  left:5px;
- width:93%
+ width:93%;
 }
 .right-col2 {
  position:relative;
