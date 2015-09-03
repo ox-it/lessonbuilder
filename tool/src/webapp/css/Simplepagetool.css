@@ -235,7 +235,7 @@ a.edit-link:link, a.edit-link:visited, a.itemLink:link, a.itemLink:visited, a.mu
 }
 .mainList li {
     position: relative;
-    margin-bottom: 15px!important;
+    margin-bottom: 8px!important;
 #    border:1px solid transparent
 #    padding:26px;
 #    margin: 15px 0;
@@ -316,10 +316,7 @@ a.edit-link:link, a.edit-link:visited, a.itemLink:link, a.itemLink:visited, a.mu
 	padding: 0px 4px !important;
 }
 .edit-col .ui-button-text, #submit-grading .ui-button-text, .portalmenu .ui-button-text {
-	font-size: 12px !important;
-	font-weight:normal !important;
-	font-family:'PT Sans', 'Helvetica Neue', Arial, sans-serif;
-	padding:4px!important;
+	font-size: 80%;
 	/*vertical-align: middle;*/
 }
 .buttonItem {
@@ -531,7 +528,7 @@ h3.author {
 	font-size: 110%
 }
 .nextprev .usebutton span {
-	font-size: inherit
+	font-size: 80%;
 }
 .commentDiv .editLink, .commentDiv .deleteLink,  .commentDiv .replyLink {
     padding:5px;
