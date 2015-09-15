@@ -2644,8 +2644,13 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 					if (canEditPage) {
 						GeneralViewParameters eParams = new GeneralViewParameters();
 						eParams.setSendingPage(currentPage.getPageId());
+						String viewId = EditPageProducer.VIEW_ID;
 						eParams.setItemId(i.getId());
-						eParams.viewID = EditPageProducer.VIEW_ID;
+						//Checking if the html text is for FolderPickerProducer for folder listing?
+						if(i.getHtml().contains("</div>")){
+							viewId = FolderPickerProducer.VIEW_ID;
+						}
+						eParams.viewID = viewId;
 						UIOutput.make(tableRow, "edittext-td");
 						UIInternalLink.make(tableRow, "edit-link", messageLocator.getMessage("simplepage.editItem"), eParams).decorate(new UIFreeAttributeDecorator("title", messageLocator.getMessage("simplepage.edit-title.textbox").replace("{}", Integer.toString(textboxcount))));
 
@@ -3184,6 +3189,7 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 		createToolBarLink(EditPageProducer.VIEW_ID, tofill, "add-text", "simplepage.text", currentPage, "simplepage.text.tooltip").setItemId(null);
 		createFilePickerToolBarLink(ResourcePickerProducer.VIEW_ID, tofill, "add-multimedia", "simplepage.multimedia", true, false, currentPage, "simplepage.multimedia.tooltip");
 		createFilePickerToolBarLink(ResourcePickerProducer.VIEW_ID, tofill, "add-resource", "simplepage.resource", false, false,  currentPage, "simplepage.resource.tooltip");
+		createToolBarLink(FolderPickerProducer.VIEW_ID, tofill, "add-folder", "simplepage.folder", currentPage, "simplepage.addfolder.tooltip").setItemId(null);
 		UILink subpagelink = UIInternalLink.makeURL(tofill, "subpage-link", "#");
 
 		// content menu not on students

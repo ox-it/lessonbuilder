@@ -51,8 +51,11 @@ function resizeiframe(id) {
 <link rel="stylesheet" href="$context/js/jquery.oembed.css" type="text/css" />
 <script type="text/javascript" src="$context/js/jquery.cluetip.min.js"></script>
 <link rel="stylesheet" href="$context/css/jquery.cluetip.css" type="text/css" />
+<link rel="stylesheet" href="/library/editor/ckextraplugins/common-wl/css/file-tree.css" type="text/css"/>
 <script type="text/javascript" src="$context/js/peer-eval.js"></script>
 <script type="text/javascript" src="$context/js/hoverIntent.js"></script>
+<script type="text/javascript" src="/library/editor/ckextraplugins/common-wl/js/file-tree.js"></script>
+<script type="text/javascript" src="/library/editor/ckextraplugins/common-wl/js/folder-listing.js"></script>
 <script type="text/javascript" src="$context/js/show-page.js"></script>
 <script type="text/javascript" src="$context/js/gradingAjax.js"></script>
 
@@ -188,6 +191,10 @@ function resizeiframe(id) {
 		    <a role="menuitem" href="#" rsf:id="add-resource" class="add-resource"><span rsf:id="msg.simplepage.resource"></span></a>
                     <div rsf:id="msg=simplepage.resource-descrip"></div>
 		  </li>
+            <li>
+                <a role="menuitem" href="#" rsf:id="add-folder" class="add-folder-link" ><span rsf:id="msg.simplepage.folder"></span></a>
+                <div rsf:id="msg=simplepage.addfolder-descrip"></div>
+            </li>
 		  <li rsf:id="assignment-li">
 		    <a role="menuitem" href="#" rsf:id="add-assignment"><span rsf:id="msg.simplepage.assignment"></span></a>
                     <div rsf:id="msg=simplepage.assignment-descrip"></div>
