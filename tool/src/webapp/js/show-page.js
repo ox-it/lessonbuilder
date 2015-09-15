@@ -2036,7 +2036,9 @@ $(function() {
 	$("#dropdown").click(buttonToggleDropdown);
 	$("#dropdownc").click(buttonToggleDropdownc);
 	dropDownViaClick = false;
-
+	$('.no-highlight').folderListing({
+		enableHighlight: false,
+	});
 	return false;
 });
 
