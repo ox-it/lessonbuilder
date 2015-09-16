@@ -175,21 +175,6 @@ $(function() {
 			resizable: false,
 			draggable: false
 		});
-		
-		$('#delete-confirm').dialog({
-			autoOpen: false,
-			resizable: false,
-			    modal: true,
-			dialogClass: "no-close",
-			    buttons: [{text:msg("simplepage.delete"),
-				          click: function() {
-				          insist = true;
-				          delbutton.click();
-				      }},{text:msg("simplepage.cancel_message"),
-				          click: function() {
-				          $( this ).dialog( "close" );}}
-				]});
-
 		/* RU Rubrics ********************************************* */
 		$("#rubric-title").append($("#peer-eval-title-cloneable input"));
 		blankRubricTemplate=$(".peer-eval-create-form").html();
@@ -1763,39 +1748,6 @@ $(function() {
 		$("#item-required2").click(function(){
 			setUpRequirements();
 		});
-		
-		function delete_confirm(event, message) {
-			if (insist) {
-			    insist = false;
-			    $("#delete-confirm").dialog('close');
-			    return true;
-			}
-			insist = false;
-			$("#delete-confirm-message").text(message);
-			$("#delete-confirm").dialog("option", "position", [event.pageX, event.pageY-100]);
-			$("#delete-confirm").dialog('open');
-			return false;
-		    };
-
-		$('#delete-comments-item').click(function(event) {
-			// edit row is set by edit-comments. We're current in the dialog. need
-			// to look in the actual page row.
-			if (editrow.find('.commentDiv').size() == 0)
-			    return true;
-			delbutton = $('#delete-comments-item');
-			return delete_confirm(event, msg("simplepage.deletecommentsubmissionexist"));
-		    });
-
-		$('#delete-student-item').click(function(event) {
-			// edit row is set by edit-comments. We're current in the dialog. need
-			// to look in the actual page row.
-			if (editrow.find('.studentLink').size() == 0)
-			    return true;
-			delbutton = $('#delete-student-item');
-			return delete_confirm(event, msg("simplepage.deletestudentsubmissionexist"));
-		    });
-
-
 		$('body').bind('dialogopen', function(event) {
 			hideMultimedia();
 		});
