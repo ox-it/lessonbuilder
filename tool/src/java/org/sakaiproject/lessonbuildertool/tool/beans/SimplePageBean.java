@@ -7364,7 +7364,7 @@ public class SimplePageBean {
 			return "failure";
 		}
 		String dataDirectory = defaultPath + folderPath;
-		String html = "<div data-copyright=\"true\" class=\"no-highlight\" data-description=\"true\" data-directory=" +dataDirectory+ " data-files=\"true\" data-folder-listing=\"true\"></div>";
+		String html = "<div data-copyright=\"true\" class=\"no-highlight\" data-description=\"true\" data-directory='" +dataDirectory+ "' data-files=\"true\" data-folder-listing=\"true\"></div>";
 		String status = "success";
 		if (canEditPage()) {
 			SimplePageItem item;
