@@ -102,7 +102,8 @@ public class FolderPickerProducer implements ViewComponentProducer, NavigationCa
                     //getting the path of selected folder
                     String[] stringArray = html.split(contentHostingService.getSiteCollection(simplePageBean.getCurrentSiteId()));
                     String[] folderPath = stringArray[1].split("data-files");
-                    UIParameter parameter = new UIParameter("edit-folder-path", folderPath[0].trim());
+                    String path = folderPath[0].trim().replaceAll("'","");
+                    UIParameter parameter = new UIParameter("edit-folder-path", path);
                     form.addParameter(parameter);
                 }
                 
