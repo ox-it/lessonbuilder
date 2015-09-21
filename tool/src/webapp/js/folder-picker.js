@@ -11,6 +11,7 @@ $(function() {
 		onFileEvent: function(file) {
 			window.open(file);
 		},
+		displayRootDirectory: true,
 	});
 	if( editFolderPath !== undefined){
 		updatePathInput(editFolderPath);
