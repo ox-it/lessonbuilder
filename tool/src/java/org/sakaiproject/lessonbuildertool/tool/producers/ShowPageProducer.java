@@ -2647,7 +2647,7 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 						String viewId = EditPageProducer.VIEW_ID;
 						eParams.setItemId(i.getId());
 						//Checking if the html text is for FolderPickerProducer for folder listing?
-						if(i.getHtml().contains("</div>")){
+						if(i.getHtml().contains("data-folder-listing")){
 							viewId = FolderPickerProducer.VIEW_ID;
 						}
 						eParams.viewID = viewId;
