@@ -7364,6 +7364,7 @@ public class SimplePageBean {
 			return "failure";
 		}
 		String dataDirectory = defaultPath + folderPath;
+		// If you change this make sure the detection still works when deciding where to display edit buttons.
 		String html = "<div data-copyright=\"true\" class=\"no-highlight\" data-description=\"true\" data-directory='" +dataDirectory+ "' data-files=\"true\" data-folder-listing=\"true\"></div>";
 		String status = "success";
 		if (canEditPage()) {
