@@ -1400,6 +1400,7 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 							UIOutput.make(tableRow, "item-samewindow", Boolean.toString(i.isSameWindow()));
 
 							UIVerbatim.make(tableRow, "item-path", getItemPath(i));
+							UIOutput.make(tableRow, "resource-type-text", i.getHtml());
 						}
 
 					} // end of canEditPage
@@ -2754,6 +2755,7 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 		createCommentsDialog(tofill);
 		createStudentContentDialog(tofill, currentPage);
 		createQuestionDialog(tofill, currentPage);
+		createChangeResourceVersionDialog(tofill, currentPage);
 	}
 
     // get encrypted version of session id. This is our equivalent of session.id, except that we
@@ -3358,6 +3360,12 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 		fileparams.setWebsite(false);
 		fileparams.viewID = ResourcePickerProducer.VIEW_ID;
 		UIInternalLink.make(form, "change-resource", messageLocator.getMessage("simplepage.change_resource"), fileparams);
+		//for uploading new versions of old resource
+		params = new GeneralViewParameters();
+		params.setSendingPage(currentPage.getPageId());
+		params.setItemId(pageItem.getId());
+		params.viewID = ShowItemProducer.VIEW_ID;
+		UIInternalLink.make(form, "change-resource-version", messageLocator.getMessage("simplepage.change-resource-version"), params);
 
 		params = new GeneralViewParameters();
 		params.setSendingPage(currentPage.getPageId());
@@ -3458,6 +3466,18 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 			index++;
 		}
 
+	}
+	//To upload latest version of resource without creating multiple copies in Resources
+	private void createChangeResourceVersionDialog(UIContainer tofill, SimplePage currentPage) {
+		UIOutput.make(tofill, "change-resource-version-dialog").decorate(new UIFreeAttributeDecorator("title", messageLocator.getMessage("simplepage.change-resource-version")));
+		UIForm form = UIForm.make(tofill, "change-resource-version-form");
+		makeCsrf(form, "csrf12");
+		UIOutput.make(form, "resource-name-label", messageLocator.getMessage("simplepage.resource-name-label"));
+		UIOutput.make(form, "resource-type-label", messageLocator.getMessage("simplepage.resource-type-label"));
+		UIInput.make(form, "resource-name", "#{simplePageBean.resourceName}");
+		UIInput.make(form, "rs-item-id", "#{simplePageBean.itemId}");
+		UICommand.make(form, "rs-add-item", messageLocator.getMessage("simplepage.upload-message"), "#{simplePageBean.uploadLatestResourceVersion}");
+		UICommand.make(form, "rs-cancel", messageLocator.getMessage("simplepage.cancel"), null);
 	}
 
 	// for both add multimedia and add resource, as well as updating resources

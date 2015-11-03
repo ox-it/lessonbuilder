@@ -175,6 +175,13 @@ $(function() {
 			resizable: false,
 			draggable: false
 		});
+		$('#change-resource-version-dialog').dialog({
+			autoOpen: false,
+			width: 700,
+			modal: false,
+			resizable: false,
+			draggable: false
+		});
 		/* RU Rubrics ********************************************* */
 		$("#rubric-title").append($("#peer-eval-title-cloneable input"));
 		blankRubricTemplate=$(".peer-eval-create-form").html();
@@ -478,6 +485,7 @@ $(function() {
 			$("#comments-dialog").dialog("option", "width", outerWidth-10);
 			$("#student-dialog").dialog("option", "width", outerWidth-10);
 			$("#question-dialog").dialog("option", "width", outerWidth-10);
+			$("#change-resource-version-dialog").dialog("option", "width", outerWidth-10);
 		}
 		
 		$(".edit-youtube").click(function(){
@@ -1221,6 +1229,7 @@ $(function() {
 			$("#change-quiz-p").hide();		
 			$("#change-forum-p").hide();		
 			$("#change-resource-p").hide();	
+			$("#change-resource-version-p").hide();
 			$("#change-blti-p").hide();
 			$("#change-page-p").hide();	
 			$("#edit-item-object-p").hide();	
@@ -1438,8 +1447,11 @@ $(function() {
 			} else {
 			    // resource
 			    $("#change-resource-p").show();
+			    $("#change-resource-version-p").show();
 			    $("#change-resource").attr("href", 
 			        $("#change-resource").attr("href").replace("pageItemId=-1", "pageItemId=" + itemid));
+				$("#change-resource-version").attr("href",
+				    $("#change-resource-version").attr("href").replace("pageItemId=-1", "pageItemId=" + itemid));
 			    var groups = row.find(".item-groups").text();
 			    var grouplist = $("#grouplist");
 			    if (groups == "--inherited--")
@@ -1452,6 +1464,7 @@ $(function() {
 				    checkgroups(grouplist, groups);
 				}
 			    }
+			    $("#resource-mime-type").val(row.find(".resource-type-text").text());
 			    row.find(".path-url").attr("href", row.find(".itemlink").attr('href'));
 			    $("#path").html(row.find(".item-path").html());
 
@@ -1748,6 +1761,20 @@ $(function() {
 		$("#item-required2").click(function(){
 			setUpRequirements();
 		});
+		$('#change-resource-version').click(function(){
+			var row = $(this).parent().parent().parent();
+			closeEditItemDialog();
+			$("#change-resource-version-dialog").prev().children(".ui-dialog-title").text($(this).text());
+			$("#rs-item-id").val($("#item-id").val());
+			$("#resource-name").val($("#name").val());
+			$("#resource-type").val($("#resource-mime-type").val());
+			var position =  $("#edit-item-dialog").dialog('option','position');
+			$("#change-resource-version-dialog").dialog("option", "position", position);
+			$("#change-resource-version-dialog").dialog('open');
+			$('#resource-version-error-container').hide();
+			checksize($("#change-resource-version-dialog"));
+			return false;
+		});
 		$('body').bind('dialogopen', function(event) {
 			hideMultimedia();
 		});
@@ -1758,6 +1785,7 @@ $(function() {
 				$('#edit-multimedia-dialog').dialog('isOpen') ||
 				$('#add-multimedia-dialog').dialog('isOpen') ||
 				$('#edit-title-dialog').dialog('isOpen') ||
+				$('#change-resource-version-dialog').dialog('isOpen') ||
 				$('#new-page-dialog').dialog('isOpen') ||
 				$('#remove-page-dialog').dialog('isOpen') ||
 				$('#youtube-dialog').dialog('isOpen') ||
@@ -1921,6 +1949,7 @@ $(function() {
 	$("#assignment-dropdown-selection").hide();
 	$("#edit-youtube-error-container").hide();
 	$("#messages").hide();
+	$('#resource-version-error-container').hide();
 	
 	var megaConfig = {	
 			interval: 200,
@@ -2075,6 +2104,12 @@ function closeQuestionDialog() {
 
 function closePeerReviewDialog() {
 	$('#peer-eval-create-dialog').dialog('close');
+}
+
+function closeChangeResourceVersionDialog() {
+	$('#change-resource-version-dialog').dialog('close');
+	$('#resource-version-error-container').hide();
+	oldloc.focus();
 }
 
 function checkEditTitleForm() {
@@ -2699,6 +2734,19 @@ function toggleShortUrlOutput(defaultUrl, checkbox, textbox) {
     } else {
 	$('.'+textbox).val(defaultUrl);
     }
+}
+//function to check the name of the resource for the 'upload new version'
+function confirmResourceNamesMatch(){
+	if($('#change-resource-file').val() == '' || $('#change-resource-file').val() == null ) {
+		$('#resource-version-error').text(msg("simplepage.resource-version-title-notblank"));
+		$('#resource-version-error-container').show();
+		return false;
+	}
+	var originalResourceName = $("#resource-name").val().replace(/^\s+|\s+$/g, '');
+	var newResourceName = $("#change-resource-file").val().match(/[^\/\\]+$/);
+	if(newResourceName != originalResourceName) {
+		return confirm(msg("simplepage.replace-different-resource"));
+	}
 }
 
 

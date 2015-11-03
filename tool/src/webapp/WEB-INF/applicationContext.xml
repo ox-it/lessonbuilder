@@ -147,6 +147,8 @@ simplePageBean.peerEvalDueDate,
 simplePageBean.peerEvalOpenDate,
 simplePageBean.peerEvalAllowSelfGrade,
 simplePageBean.folderPickerSubmit,
+simplePageBean.uploadLatestResourceVersion,
+simplePageBean.resourceName,
 simplePageBean.folderPath
 </value>
 </property>
