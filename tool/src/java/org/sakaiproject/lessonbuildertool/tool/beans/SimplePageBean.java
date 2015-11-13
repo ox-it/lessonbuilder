@@ -129,6 +129,7 @@ public class SimplePageBean {
 	public static final String GRADES[] = { "A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "E", "F" };
 	public static final String FILTERHTML = "lessonbuilder.filterhtml";
 	public static final String LESSONBUILDER_ITEMID = "lessonbuilder.itemid";
+	public static final String LESSONBUILDER_ADDBEFORE = "sakai.addbefore";
 	public static final String LESSONBUILDER_PATH = "lessonbuilder.path";
 	public static final String LESSONBUILDER_BACKPATH = "lessonbuilder.backpath";
 	public static final String LESSONBUILDER_ID = "sakai.lessonbuildertool";
@@ -241,6 +242,7 @@ public class SimplePageBean {
 	private Date releaseDate;
 	private boolean hasReleaseDate;
 	private boolean nodownloads;
+	private String addBefore;  // add new item before this item
 
 	private String redirectSendingPage = null;
 	private String redirectViewId = null;
@@ -1149,28 +1151,47 @@ public class SimplePageBean {
 		    return "permission-failed";
 
 		ToolSession toolSession = sessionManager.getCurrentToolSession();
+		Long itemId = (Long)toolSession.getAttribute(LESSONBUILDER_ITEMID);
+		addBefore = (String)toolSession.getAttribute(LESSONBUILDER_ADDBEFORE);
+		toolSession.removeAttribute(LESSONBUILDER_ITEMID);
+		toolSession.removeAttribute(LESSONBUILDER_ADDBEFORE);
+
+		if (!itemOk(itemId))
+			return "permission-failed";
+
+		// if itemId specified, better only be one resource, since we replacing an existing one
+
 		List<Reference> refs = null;
 		String returnMesssage = null;
 
 		if (toolSession.getAttribute(FilePickerHelper.FILE_PICKER_CANCEL) == null && toolSession.getAttribute(FilePickerHelper.FILE_PICKER_ATTACHMENTS) != null) {
-
 			refs = (List) toolSession.getAttribute(FilePickerHelper.FILE_PICKER_ATTACHMENTS);
 			//Changed 'refs.size != 1' to refs.isEmpty() as there can be multiple Resources
-			if (refs == null || refs.isEmpty()) {
+			// more than one is an error if replacing an existing one
+			if (refs == null || refs.isEmpty())
 				return "no-reference";
+			// if item id specified, use first item only. Can't really return an error because of the way
+			// the UI works
+			if (itemId != null && itemId != -1)
+				returnMesssage = processSingleResource(refs.get(0), type, isWebSite, isCaption, itemId);
+			else {
+				for(Reference reference : refs){
+					returnMesssage = processSingleResource(reference, type, isWebSite, isCaption, itemId);
+				}
 			}
-			for(Reference reference : refs){
-				returnMesssage = processSingleResource(reference, type, isWebSite, isCaption);
-			}
+			toolSession.removeAttribute(FilePickerHelper.FILE_PICKER_ATTACHMENTS);
+			toolSession.removeAttribute(FilePickerHelper.FILE_PICKER_CANCEL);
 		} else {
+			toolSession.removeAttribute(FilePickerHelper.FILE_PICKER_ATTACHMENTS);
+			toolSession.removeAttribute(FilePickerHelper.FILE_PICKER_CANCEL);
+
 			return "cancel";
 		}
-
 		return returnMesssage;
 	}
 
 	//This method is written to enable user to select multiple Resources from the tool
-	private String processSingleResource(Reference reference,int type, boolean isWebSite, boolean isCaption){
+	private String processSingleResource(Reference reference,int type, boolean isWebSite, boolean isCaption, Long itemId){
 
 		ToolSession toolSession = sessionManager.getCurrentToolSession();
 		String id  = reference.getId();
@@ -1237,16 +1258,6 @@ public class SimplePageBean {
 		// }finally {
 		//   if(pushed) popAdvisor();
 		//}
-
-		Long itemId = (Long)toolSession.getAttribute(LESSONBUILDER_ITEMID);
-
-		if (!itemOk(itemId))
-		    return "permission-failed";
-
-		toolSession.removeAttribute(FilePickerHelper.FILE_PICKER_ATTACHMENTS);
-		toolSession.removeAttribute(FilePickerHelper.FILE_PICKER_CANCEL);
-		toolSession.removeAttribute(LESSONBUILDER_ITEMID);
-
 		String[] split = id.split("/");
 
 		if("application/zip".equals(mimeType) && isWebSite) {
@@ -1359,18 +1370,59 @@ public class SimplePageBean {
 
     // main code for adding a new item to a page
 	private SimplePageItem appendItem(String id, String name, int type)   {
-	    // add at the end of the page
-	        List<SimplePageItem> items = getItemsOnPage(getCurrentPageId());
+		// add at the end of the page
+		List<SimplePageItem> items = getItemsOnPage(getCurrentPageId());
 		// ideally the following should be the same, but there can be odd cases. So be safe
-		int size = items.size();
-		if (size > 0) {
-		    int seq = items.get(size-1).getSequence();
-		    if (seq > size)
-			size = seq;
+		long before = 0;
+		boolean addAfter = false;
+		if (addBefore != null && addBefore.startsWith("-")) {
+			addAfter = true;
+			addBefore = addBefore.substring(1);
 		}
-		size++;
+		if (addBefore != null && !addBefore.equals("")) {
+			try {
+				before = Long.parseLong(addBefore);
+			} catch (Exception e) {
+				// nothing. ignore bad arg
+			}
+		}
 
-		SimplePageItem i = simplePageToolDao.makeItem(getCurrentPageId(), size, type, id, name);
+		// we have an item id. insert before it
+		int nseq = 0;  // sequence number of new item
+		boolean after = false; // we found the item to insert before
+		if (before > 0) {
+			// have an item number specified, look for the item to insert before
+			for (SimplePageItem item: items) {
+				if (item.getId() == before) {
+					// found item to insert before
+					// use its sequence and bump up it and all after
+					nseq = item.getSequence();
+					after = true;
+					if (addAfter) {
+						nseq++;
+						continue;
+					}
+				}
+				if (after) {
+					item.setSequence(item.getSequence() + 1);
+					simplePageToolDao.quickUpdate(item);
+				}
+			}
+		}
+
+		// if after not set, we didn't find the item; either no item specified or it
+		// isn't on the page
+		if (!after) {
+			nseq = items.size();
+			if (nseq > 0) {
+				int seq = items.get(nseq-1).getSequence();
+				if (seq > nseq)
+					nseq = seq;
+			}
+			nseq++;
+		}
+
+		SimplePageItem i = simplePageToolDao.makeItem(getCurrentPageId(), nseq, type, id, name);
 
 		// defaults to a fixed width and height, appropriate for some things, but for an
 		// image, leave it blank, since browser will then use the native size
