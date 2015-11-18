@@ -2713,7 +2713,7 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 			if (canEditPage) {
 				UIOutput.make(tofill, "startupHelp")
 				    .decorate(new UIFreeAttributeDecorator("src", 
-					getLocalizedURL((currentPage.getOwner() != null) ? "student.html" : "general.html")))
+					getLocalizedURL((currentPage.getOwner() != null) ? "student.html" : "new-general.html")))
 				    .decorate(new UIFreeAttributeDecorator("id", "iframe"));
 				if (!iframeJavascriptDone) {
 				    UIOutput.make(tofill, "iframeJavascript");
@@ -3181,7 +3181,7 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 		// right side
 		createToolBarLink(ReorderProducer.VIEW_ID, toolBar, "reorder", "simplepage.reorder", currentPage, "simplepage.reorder-tooltip");
 		UILink.make(toolBar, "help", messageLocator.getMessage("simplepage.help"), 
-			    getLocalizedURL( isStudent ? "student.html" : "general.html"));
+			    getLocalizedURL( isStudent ? "student.html" : "new-general.html"));
 		if (!studentPage)
 		    createToolBarLink(PermissionsHelperProducer.VIEW_ID, toolBar, "permissions", "simplepage.permissions", currentPage, "simplepage.permissions.tooltip");
 
