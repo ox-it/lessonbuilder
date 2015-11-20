@@ -267,6 +267,9 @@ public class SimplePageBean {
 	private Date peerEvalOpenDate;
 	private boolean peerEvalAllowSelfGrade;
 	private String folderPath;
+	//variable set when updating/uploading latest version of an existing resource
+	private String resourceName;
+	private String resourceId = null;
 
     // almost ISO format. real thing can't be done until Java 7. uses -0400 rather than -04:00
     //        SimpleDateFormat isoDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
@@ -346,6 +349,14 @@ public class SimplePageBean {
 
 	public void setFolderPath(String folderPath) {
 		this.folderPath = folderPath;
+	}
+
+	public String getResourceName() {
+		return resourceName;
+	}
+
+	public void setResourceName(String resourceName) {
+		this.resourceName = resourceName;
 	}
 
 	// Caches
@@ -5542,6 +5553,7 @@ public class SimplePageBean {
 
 			
 			if (file != null) {
+				ContentResourceEdit res = null;
 				if (!uploadSizeOk(file))
 				    return;
 
@@ -5563,10 +5575,20 @@ public class SimplePageBean {
 				
 				mimeType = file.getContentType();
 				try {
-					ContentResourceEdit res = contentHostingService.addResource(collectionId, 
-							  	Validator.escapeResourceName(base),
-							  	Validator.escapeResourceName(extension),
-							  	MAXIMUM_ATTEMPTS_FOR_UNIQUENESS);
+					if(resourceId != null && !(resourceId.equals(""))){
+						//When user uploads a new version of old file with different name,set the name as old file name
+						String previousFileName = resourceId.substring(resourceId.lastIndexOf("/")+1);
+						if(!previousFileName.equals(name)){
+							name = previousFileName;
+						}
+						res = contentHostingService.editResource(resourceId);
+					}
+					else{
+						res = contentHostingService.addResource(collectionId,
+								Validator.escapeResourceName(base),
+								Validator.escapeResourceName(extension),
+								MAXIMUM_ATTEMPTS_FOR_UNIQUENESS);
+					}
 					if (isCaption)
 					    res.setContentType("text/vtt");
 					else
@@ -7437,6 +7459,18 @@ public class SimplePageBean {
 			status = "cancel";
 		}
 		return status;
+	}
+	/**
+	 * To upload latest version of resource file without creating duplicates in Resources
+	 */
+	public void uploadLatestResourceVersion(){
+		SimplePageItem simplePageItem = findItem(itemId);
+		if (simplePageItem != null && ( multipartMap.size() > 0 )) {
+			resourceId = simplePageItem.getSakaiId();
+			addMultimedia();
+		} else {
+			log.warn("uploadLatestResourceVersion Could not find resource object: " + itemId);
+		}
 	}
 
 }

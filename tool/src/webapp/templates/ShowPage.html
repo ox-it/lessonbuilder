@@ -347,6 +347,7 @@ function resizeiframe(id) {
                         <span rsf:id="item-name" class="link-text"></span>
                         <span rsf:id="item-format" class="item-format"></span>
                         <span rsf:id="item-path" class="item-path"></span>
+                          <span rsf:id="resource-type-text" class="resource-type-text"></span>
                       </div>
                     </div>
                     <div rsf:id="edittext-td" class="edit-col"><div><a href="#" class="usebutton itemLink" rsf:id="edit-link"></a></div></div>
@@ -770,6 +771,9 @@ function resizeiframe(id) {
 			  <p rsf:id="msg=simplepage.change_caption" id="simplepage.change_caption"></p>
 			  <p rsf:id="siteid" id="siteid"></p>
 			  <p rsf:id="locale" id="locale"></p>
+                <p rsf:id="msg=simplepage.replace-different-resource" id="simplepage.replace-different-resource"></p>
+                <p rsf:id="msg=simplepage.resource-version-title-notblank" id="simplepage.resource-version-title-notblank"></p>
+                <p rsf:id="msg=simplepage.change-resource-version-instruction" id="simplepage.change-resource-version-instruction"></p>
 			</div>
 
 			<div id="subpage-dialog" rsf:id="subpage-dialog">
@@ -853,6 +857,11 @@ function resizeiframe(id) {
                                 <a href="#" rsf:id="change-resource" id="change-resource"><span rsf:id="msg.simplepage.change_resource"></span></a>
                             </p>
 
+                            <!-- upload new version functionality for add content links -->
+                            <p class="shorttext required" id="change-resource-version-p">
+                                <a href="#" rsf:id="change-resource-version" id="change-resource-version"><span rsf:id="msg.simplepage.change-resource-version"></span></a>
+                            </p>
+
                             <p class="shorttext required" id="change-page-p">
                                 <a href="#" rsf:id="change-page" id="change-page"><span rsf:id="msg.simplepage.change_page"></span></a>
                             </p>
@@ -897,7 +906,8 @@ function resizeiframe(id) {
                     </div>
                     
                     <input type="hidden" rsf:id="item-id" id="item-id" />
-                    
+                    <!-- hidden input for storing mimetype of type Resource-->
+                    <input type="hidden" name="resource-mime-type" id="resource-mime-type" />
                     <div rsf:id="permDiv" class="">
                          <div id="prereqstuff">
                              <p class="checkbox">
@@ -1020,7 +1030,36 @@ function resizeiframe(id) {
                     </div>
                 </form>			    
 			</div>
-			
+
+            <div id="change-resource-version-dialog" rsf:id="change-resource-version-dialog">
+                <form action="#" rsf:id="change-resource-version-form" method="post" enctype="multipart/form-data" class="controlPanel">
+                    <input type="hidden" rsf:id="csrf12" />
+                    <div class="ui-widget" id="resource-version-error-container">
+                        <div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
+                            <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+                                <strong rsf:id="msg=simplepage.error_colon"></strong> <span id="resource-version-error"></span></p>
+                        </div>
+                    </div>
+                    <div class="">
+                        <p class="instruction" rsf:id="msg=simplepage.change-resource-version-instruction"></p>
+                        <p class="required">
+                            <label rsf:id="msg=simplepage.change-resource-version" for="change-resource-file">File</label>
+                            <input type="file" name="change-resource-file" id="change-resource-file" style="width:95%" class="edit-multimedia-input"/>
+                        </p>
+                        <p class="required">
+                            <label rsf:id="resource-name-label" class="pageTitle" for="resource-name"></label>
+                            <input type="text" name="resource-name" rsf:id="resource-name" id="resource-name"  style="border:none" size="30" maxlength="99" readonly= "true"/>
+                        </p>
+                        <p class="required">
+                            <label rsf:id="resource-type-label" class="pageTitle" for="resource-type"></label>
+                            <input type="text" name="resource-type" id="resource-type"  style="border:none" maxlength="99" size="70" readonly= "true"/>
+                        </p>
+                        <input class="bold" onclick="return confirmResourceNamesMatch()" type="submit" id="rs-add-item" rsf:id="rs-add-item" />
+                        <input type="submit" rsf:id="rs-cancel" onclick="closeChangeResourceVersionDialog(); return false" />
+                    </div>
+                    <input type="hidden" rsf:id="rs-item-id" id="rs-item-id" />
+                </form>
+            </div>
 
             <div id="edit-multimedia-dialog" rsf:id="edit-multimedia-dialog">
                 <form action="#" rsf:id="edit-multimedia-form" class="controlsPanel">
