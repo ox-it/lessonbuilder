@@ -3181,7 +3181,7 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 		// right side
 		createToolBarLink(ReorderProducer.VIEW_ID, toolBar, "reorder", "simplepage.reorder", currentPage, "simplepage.reorder-tooltip");
 		UILink.make(toolBar, "help", messageLocator.getMessage("simplepage.help"), 
-			    getLocalizedURL( isStudent ? "student.html" : "new-general.html"));
+			    getLocalizedURL( isStudent ? "student.html" : "general.html"));
 		if (!studentPage)
 		    createToolBarLink(PermissionsHelperProducer.VIEW_ID, toolBar, "permissions", "simplepage.permissions", currentPage, "simplepage.permissions.tooltip");
 
