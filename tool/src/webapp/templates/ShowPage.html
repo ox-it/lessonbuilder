@@ -59,6 +59,7 @@ function resizeiframe(id) {
 <script type="text/javascript" src="$context/js/show-page.js"></script>
 <script type="text/javascript" src="$context/js/delete-confirm.js"></script>
 <script type="text/javascript" src="$context/js/gradingAjax.js"></script>
+<script type="text/javascript" src="$context/js/twitter.js"></script>
 
 <a href="#" rsf:id="redirect-link" id="redirect-link"></a>
 <script type="text/javascript" language="JavaScript" rsf:id="redirect">
@@ -221,6 +222,10 @@ function resizeiframe(id) {
                     <a href="#" role="menuitem" rsf:id="add-content"><span rsf:id="msg.simplepage.add-student-content"></span></a>
                     <div rsf:id="msg=simplepage.student-descrip"></div>
                   </li>
+                  <li rsf:id="twitter-li">
+                    <a href="#" role="menuitem" rsf:id="add-twitter" class="twitter-link"><span rsf:id="msg=simplepage.twitter"></span></a>
+                    <div rsf:id="msg=simplepage.twitter-descrip"></div>
+                  </li>
 		  <li>
 		    <a role="menuitem" href="#" rsf:id="subpage-link" class="subpage-link"><span rsf:id="msg=simplepage.subpage"></span></a>
                     <div rsf:id="msg=simplepage.subpage-descrip"></div>
@@ -354,6 +359,15 @@ function resizeiframe(id) {
                     <div rsf:id="itemSpan" class="right-col">
                       <div rsf:id="item-groups-titles-text" class="item-group-titles"></div>
                       <div rsf:id="content" class="textbox"></div>
+                    </div>
+                    <div rsf:id="twitter-td" class="edit-col"><div class="edit-twitter-div"><a href="#" class="usebutton edit-twitter" onclick="return false" rsf:id="edit-twitter"></a></div></div>
+                    <div rsf:id="twitterSpan" class="right-col">
+                        <div rsf:id="item-groups-titles-text" class="item-group-titles"></div>
+                        <div rsf:id="content" class="textbox"></div>
+                        <span style="display:none" rsf:id="twitterId" class="twitter-id"></span>
+                        <span style="display:none" rsf:id="username" class="username"></span>
+                        <span style="display:none" rsf:id="tweetLimit" class="tweetLimit"></span>
+                        <span style="display:none" rsf:id="twitter-height" class="twitterHeight"></span>
                     </div>
                     <div rsf:id="editmm-td" class="edit-col"><div><a href="#" class="usebutton multimedia-edit" onclick="return false" rsf:id="iframe-edit"></a></div></div>
                     <div rsf:id="iframeSpan" class="hideOnDialog right-col"><div>
@@ -773,6 +787,8 @@ function resizeiframe(id) {
 			  <p rsf:id="locale" id="locale"></p>
                 <p rsf:id="msg=simplepage.replace-different-resource" id="simplepage.replace-different-resource"></p>
                 <p rsf:id="msg=simplepage.resource-version-title-notblank" id="simplepage.resource-version-title-notblank"></p>
+                <p rsf:id="msg=simplepage.twitter-name-notblank" id="simplepage.twitter-name-notblank"></p>
+                <p rsf:id="msg=simplepage.height-error-message" id="simplepage.height-error-message"></p>
                 <p rsf:id="msg=simplepage.change-resource-version-instruction" id="simplepage.change-resource-version-instruction"></p>
 			</div>
 
@@ -1572,8 +1588,6 @@ function resizeiframe(id) {
                                 <label for="student-comments-max" class="indnt3 pageTitle"><span rsf:id="msg=simplepage.comments-max"></span></label>
                                 <input type="text" name="student-comments-max" id="student-comments-max" rsf:id="student-comments-max" size="5" maxlength="5"/>
                             </p>
-
-				
 			    <div rsf:id="peer-evaluation-creation"><br />
 								
     			      <input type="checkbox" name="peer-eval-check" id="peer-eval-check" rsf:id="peer-eval-check" />
@@ -1773,6 +1787,37 @@ function resizeiframe(id) {
                         <input type="submit" class="deleteButton" rsf:id="delete-question-item" id="delete-question-item"/>
                     </p>
                 </form>
+			</div>
+			<div id="add-twitter-dialog" rsf:id="add-twitter-dialog">
+				<form action="#" rsf:id="add-twitter-form" method="post" enctype="multipart/form-data" class="controlPanel">
+					<input type="hidden" rsf:id="csrf13" />
+					<input type="hidden" rsf:id="twitterEditId" id="twitterEditId" />
+					<div class="ui-widget" id="twitter-error-container">
+						<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
+							<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+							<strong rsf:id="msg=simplepage.error_colon"></strong> <span id="twitter-error"></span></p>
+						</div>
+					</div>
+					<div class="">
+						<p class="required">
+							<label rsf:id="twitter-username-label" class="pageTitle" for="twitter-username"></label>
+							<input style="margin-left: 29px;" type="text" name="twitter-username" rsf:id="twitter-username" id="twitter-username"  size="20" maxlength="99"/>
+						</p>
+						<p class="required">
+							<label rsf:id="height-label" class="pageTitle" for="widget-height"></label>
+							<input style="margin-left: 104px;" type="text" name="widget-height" rsf:id="widget-height" id="widget-height"  maxlength="99" size="20"/>&nbsp;<span id="heightErrmsg"></span>
+						</p>
+						<label for="numberDropdown" rsf:id="numberDropdownLabel"></label>
+						<select style="margin-left: 170px;" rsf:id="numberDropdown" id="numberDropdown" name="numberDropdown">
+							<option rsf:id="option:"><span rsf:id="optionText"></span></option>
+						</select><br/>
+						<p class="act">
+							<input class="bold" onclick="return confirmAddTwitterTimeline()" type="submit" id="twitter-add-item" rsf:id="twitter-add-item" />
+							<input type="submit" rsf:id="twitter-cancel" onclick="closeTwitterDialog(); return false" />
+							<span id="twitter-delete-span" style="display:none"><input type="submit" class="deleteButton" rsf:id="delete-twitter-item" id="delete-twitter-item" /></span><br/>
+						</p>
+					</div>
+				</form>
 			</div>
 		</div>
 	</div>
