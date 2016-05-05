@@ -993,7 +993,15 @@ div[role="dialog"] {
  position:relative;
  left:10px;
 }
-
+.twitter-div{
+ overflow-y: auto;
+ float: left;margin:
+ 0 10.0px 20.0px 0;
+ clear: right;
+}
+.edit-twitter-div{
+float:left;
+}
 /*
 .edit-col {
     position: absolute !important;
