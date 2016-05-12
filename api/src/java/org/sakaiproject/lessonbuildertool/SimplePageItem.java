@@ -46,6 +46,8 @@ public interface SimplePageItem {
 	public static final int QUESTION = 11;
     public static final int BLTI = 12;
     public static final int PEEREVAL = 13;
+    //new SimplePageItem type added to display latest announcements in Lessons
+    public static final int ANNOUNCEMENTS = 16;
     public static final int TWITTER = 14;
 
     // sakaiId used for an item copied from another site with no real content
