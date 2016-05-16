@@ -48,6 +48,16 @@ function checkgroups(elt, groups) {
 var blankRubricTemplate, blankRubricRow;
 
 $(function() {
+
+	//Only number allowed for announcements height
+	$("#announcements-height").keypress(function (e) {
+		//if the letter is not digit then display error
+		if (e.which !== 13 && e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+			//display error message
+			$("#announcementsHeightErrmsg").html(msg("simplepage.height-error-message")).show().fadeOut("slow");
+			return false;
+		}
+	});
 	// This is called in comments.js as well, however this may be faster.
 	//if(sakai.editor.editors.ckeditor==undefined) {
 //		$(".evolved-box :not(textarea)").hide();
@@ -197,6 +207,13 @@ $(function() {
 			resizable: false,
 			draggable: false
 		});
+		$('#add-announcements-dialog').dialog({
+			autoOpen: false,
+			width: 700,
+			modal: false,
+			resizable: false,
+			draggable: false
+		});
 		/* RU Rubrics ********************************************* */
 		$("#rubric-title").append($("#peer-eval-title-cloneable input"));
 		blankRubricTemplate=$(".peer-eval-create-form").html();
@@ -263,6 +280,44 @@ $(function() {
 			$("#page-releasedate").attr('checked', 'checked');
 		    });
 
+		$('.announcements-link').click(function(){
+			closeDropdowns();
+			$('li').removeClass('editInProgress');
+			var position =  $(this).position();
+			$("#announcements-error-container").hide();
+			$("#announcementsEditId").val("-1");
+			$("#announcements-height").val("");
+			$("#announcementsNumberDropdown-selection").val("5");
+			$("#add-announcements-dialog").dialog("option", "position", [position.left, position.top]);
+			oldloc = $(this);
+			$("#add-announcements-dialog").dialog("open");
+			checksize($("#add-announcements-dialog"));
+			return false;
+		});
+
+		$(".edit-announcements").click(function(){
+			closeDropdowns();
+			var row = $(this).closest('li');
+			var itemId = row.find(".announcementsId").text();
+			$('#announcementsEditId').val(itemId);
+			var height = row.find(".announcementsWidgetHeight").text().replace(/'/g,"");
+			$('#announcements-height').val(height);
+			var number = row.find("#numberOfAnnouncements").val();
+			$("#announcementsNumberDropdown-selection").val(number);
+			$('.edit-col').addClass('edit-colHidden');
+			$(this).closest('li').addClass('editInProgress');
+			$('#announcements-error-container').hide();
+			//Change the text of the add button to 'Update Item'
+			$("#announcements-add-item").attr("value", msg("simplepage.edit"));
+			//display delete link
+			$("#announcements-delete-span").show();
+			var position = row.position();
+			$("#add-announcements-dialog").dialog("option", "position", [position.left, position.top]);
+			oldloc = $(this);
+			$('#add-announcements-dialog').dialog('open');
+			checksize($("#add-announcements-dialog"));
+			return false;
+		});
 		$('#import-cc').click(function(){
 			closeDropdowns();
 			var position =  $(this).position();
@@ -501,6 +556,7 @@ $(function() {
 			$("#student-dialog").dialog("option", "width", outerWidth-10);
 			$("#question-dialog").dialog("option", "width", outerWidth-10);
 			$("#change-resource-version-dialog").dialog("option", "width", outerWidth-10);
+			$("#add-announcements-dialog").dialog("option", "width", outerWidth-10);
 			$("#add-twitter-dialog").dialog("option", "width", outerWidth-10);
 		}
 		
@@ -2170,6 +2226,11 @@ function closeChangeResourceVersionDialog() {
 	oldloc.focus();
 }
 
+function closeAnnouncementsDialog(){
+	$('#add-announcements-dialog').dialog('close');
+	$('#announcements-error-container').hide();
+	oldloc.focus();
+}
 function closeTwitterDialog(){
 	$('#add-twitter-dialog').dialog('close');
 	$('#twitter-error-container').hide();

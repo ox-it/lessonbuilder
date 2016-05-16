@@ -40,7 +40,7 @@ $(function() {
 			delbutton = $('#delete-student-item');
 			return delete_confirm(event, msg("simplepage.deletestudentsubmissionexist"));
 		    });
-		$('#delete-item, #delete-multimedia-item, #delete-youtube-item, #delete-movie-item, #delete-question-item, #delete-text-item, #delete-twitter-item').click(function(event) {
+		$('#delete-item, #delete-multimedia-item, #delete-youtube-item, #delete-movie-item, #delete-question-item, #delete-text-item, #delete-twitter-item, #delete-announcements-item').click(function(event) {
 			delbutton = $(this);
 			return delete_confirm(event, msg("simplepage.delete_page_confirm"));
 		});
