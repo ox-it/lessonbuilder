@@ -137,6 +137,7 @@ public class SimplePageBean {
 	public static final String LESSONBUILDER_ID = "sakai.lessonbuildertool";
 	public static final String ANNOUNCEMENTS_TOOL_ID = "sakai.announcements";
 	public static final String TWITTER_WIDGET_ID = "lessonbuilder.twitter.widget.id";
+	public static final String TWITTER_WIDGET_DEFAULT_HEIGHT = "300";
 
 	private static String PAGE = "simplepage.page";
 	private static String SITE_UPD = "site.upd";
@@ -7507,17 +7508,26 @@ public class SimplePageBean {
 	 * To add twitter timeline with given parameters in a Lessons page
 	 */
 	public String addTwitterTimeline(){
+		if (!itemOk(itemId))
+			return "permission-failed";
+		if (!checkCsrf())
+			return "permission-failed";
 		//if username is not provided return
 		if(StringUtils.isBlank(twitterUsername)){
 			return "failure";
+		}
+		//Check if height is supplied if not then set to default
+		if(StringUtils.isBlank(twitterWidgetHeight)){
+			twitterWidgetHeight = TWITTER_WIDGET_DEFAULT_HEIGHT;
 		}
 		//if user has added @ symbol with the username, remove it
 		if( twitterUsername.contains("@")){
 			twitterUsername = StringUtils.remove(twitterUsername, "@");
 		}
 		String href  = "https://twitter.com/" + StringUtils.trim(twitterUsername);
+		String divHeight = "height:" + twitterWidgetHeight + "px;";
 		//Note: widget id used is from weblearn's twitter account
-		String html = "<div align=\"left\"  class=\"twitter-div\"><a class=\"twitter-timeline\" href= '" +href+ "' data-widget-id='" +ServerConfigurationService.getString(TWITTER_WIDGET_ID)+ "'  data-tweet-limit='" +twitterDropDown +"' data-dnt=\"true\" height='" +twitterWidgetHeight+"' data-screen-name='" +twitterUsername+"'>Tweets by @'" +twitterUsername+"'</a></div>";
+		String html = "<div align=\"left\" style='"+divHeight+"' class=\"twitter-div\"><a class=\"twitter-timeline\" href= '" +href+ "' data-widget-id='" +ServerConfigurationService.getString(TWITTER_WIDGET_ID)+ "'  data-tweet-limit='" +twitterDropDown +"' data-dnt=\"true\" data-screen-name='" +twitterUsername+"'>Tweets by @'" +twitterUsername+"'</a></div>";
 		String status = "success";
 		if (canEditPage()) {
 			SimplePageItem item;
@@ -7529,6 +7539,10 @@ public class SimplePageBean {
 				item = appendItem("", "", SimplePageItem.TWITTER);
 			}
 			item.setHtml(html);
+			//setting height , username and number of tweets as attributes for the twitter item.
+			item.setAttribute("height", twitterWidgetHeight);
+			item.setAttribute("username", twitterUsername );
+			item.setAttribute("numberOfTweets", twitterDropDown );
 			item.setPrerequisite(this.prerequisite);
 			setItemGroups(item, selectedGroups);
 			update(item);
