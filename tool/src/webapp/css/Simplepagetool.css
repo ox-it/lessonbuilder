@@ -1076,6 +1076,13 @@ float:left;
 font-family: 'Segoe UI', Segoe, Tahoma, Helvetica, Arial, sans-serif;
 color: #666;
 }
+.calendar-div{
+width: 550px;
+}
+.fc-event{
+cursor: pointer;
+margin-bottom: 6px; /*to add space between two events*/
+}
 
 .itemDate {
 font-family: 'Segoe UI', Segoe, Tahoma, Helvetica, Arial, sans-serif;

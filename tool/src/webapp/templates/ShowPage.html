@@ -10,6 +10,7 @@
 <script language="JavaScript" src="/lessonbuilder-tool/js/SakaiRSFWidgets.js" type="text/javascript" rsf:id="fckScript"></script>
 <script type="text/javascript" language="JavaScript" src="../js/rsf.js"></script>
 <link type="text/css" href="$context/css/simplepage-theme/jquery-ui-1.10.3.custom.css" rel="stylesheet" />	
+<link type="text/css" href="$context/css/fullcalendar.css" rel="stylesheet" />
 <link rsf:id="scr=portal-matter" href="/library/skin/tool_base.css" type="text/css" rel="stylesheet" media="all" />
 <link rsf:id="scr=portal-matter" href="/library/skin/default/tool.css" type="text/css" rel="stylesheet" media="all" />
 <link rel="stylesheet" rsf:id="scr=rewrite-url" href="../css/Simplepagetool.css" type="text/css" />
@@ -59,6 +60,9 @@ function resizeiframe(id) {
 <script type="text/javascript" src="$context/js/show-page.js"></script>
 <script type="text/javascript" src="$context/js/delete-confirm.js"></script>
 <script type="text/javascript" src="$context/js/gradingAjax.js"></script>
+<script type="text/javascript" src="$context/js/fullcalendar.js"></script>
+<script type="text/javascript" src="$context/js/moment.min.js"></script>
+<script type="text/javascript" src="$context/js/lessons-calendar.js"></script>
 <script type="text/javascript" src="$context/js/forum-summary.js"></script>
 <script type="text/javascript" src="$context/js/announcements.js"></script>
 <script type="text/javascript" src="$context/js/twitter.js"></script>
@@ -203,6 +207,10 @@ function resizeiframe(id) {
 		  <li rsf:id="assignment-li">
 		    <a role="menuitem" href="#" rsf:id="add-assignment"><span rsf:id="msg.simplepage.assignment"></span></a>
                     <div rsf:id="msg=simplepage.assignment-descrip"></div>
+		  </li>
+		  <li rsf:id="calendar-li">
+		    <a role="menuitem" rsf:id="calendar-link" class="calendar-link"><span rsf:id="msg=simplepage.calendarLinkText"></span></a>
+		    <div rsf:id="msg=simplepage.calendar-descrip" id="calendar-descrip"></div>
 		  </li>
 		  <li rsf:id="forum-summary-li">
 		    <a role="menuitem" href="#" rsf:id="forum-summary-link" class="forum-summary-link"><span rsf:id="msg=simplepage.forumSummaryLinkText"></span></a>
@@ -364,6 +372,14 @@ function resizeiframe(id) {
                         <span rsf:id="item-path" class="item-path"></span>
                           <span rsf:id="resource-type-text" class="resource-type-text"></span>
                       </div>
+                    </div>
+                    <div rsf:id="calendar-td" class="edit-col"><div class="edit-calendar-div"><a href="#" class="usebutton edit-calendar" onclick="return false" rsf:id="edit-calendar"></a></div></div>
+                    <div rsf:id="calendarSpan" class="right-col">
+                        <div rsf:id="item-groups-titles-text" class="item-group-titles"></div>
+                        <div rsf:id="content" class="textbox"></div>
+                        <span style="display:none" rsf:id="calendar-item-id" class="calendar-item-id"></span>
+                        <span style="display:none" rsf:id="site-events-url" class="site-events-url"></span>
+                        <span style="display:none" rsf:id="event-tool-url" class="event-tool-url"></span>
                     </div>
                     <div rsf:id="forum-summary-td" class="edit-col"><div class="edit-forum-summary-div"><a href="#" class="usebutton edit-forum-summary" onclick="return false" rsf:id="edit-forum-summary"></a></div></div>
                     <div rsf:id="forumSummarySpan" class="right-col">
@@ -743,6 +759,7 @@ function resizeiframe(id) {
 
 		<div style="display:none;">
 			<p rsf:id="msg=simplepage.announcements-no-message" id="simplepage.announcements-no-message"></p>
+			<p rsf:id="msg=simplepage.calendar-more-info" id="simplepage.calendar-more-info"></p>
 			<p rsf:id="msg=simplepage.add-comment" id="simplepage.add-comment"></p>
 			<p rsf:id="msg=simplepage.edit-comment" id="simplepage.edit-comment"></p>
 			<p rsf:id="msg=simplepage.cancel_message" id="simplepage.cancel_message"></p>
@@ -1928,7 +1945,22 @@ function resizeiframe(id) {
 		<span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 0 0;"></span>
 		<span rsf:id="msg=simplepage.delete_comment_confirm" id="delete-comment-confirm"></span>
 	</div>
-	
+
+<div id ="calendarEventDialog" style="display:none;">
+	<div id="eventInfo">
+		<label rsf:id="msg=simplepage.startTime" for="startTime"></label>
+		<span id="startTime"></span><br/><br/>
+		<label rsf:id="msg=simplepage.endTime" for="endTime"></label>
+		<span id="endTime"></span><br/><br/>
+		<label rsf:id="msg=simplepage.eventType" for="event-type"></label>
+		<img id="event-type-icon"/><span id="event-type"></span><br/><br/>
+		<label rsf:id="msg=simplepage.description" for="event-description"></label>
+		<span id="event-description"></span><br/><br/>
+		 <label rsf:id="msg=simplepage.siteName" for="site-name"></label>
+		<span id="site-name"></span><br/><br/>
+		<span id="fullDetails"></span><br/><br/>
+    </div>
+</div>
 	<div rsf:id="comments-script">
 		<script type="text/javascript" src="$context/js/periodicalupdater.js"></script>
 		<script type="text/javascript" src="$context/js/comments.js"></script>

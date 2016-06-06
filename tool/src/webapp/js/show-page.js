@@ -297,6 +297,36 @@ $(function() {
 			return false;
 		});
 
+		$(".edit-calendar").click(function(){
+			var row = $(this).closest('li');
+			$("#change-assignment-p").hide();
+			$("#change-quiz-p").hide();
+			$("#change-forum-p").hide();
+			$("#change-resource-p").hide();
+			$("#change-resource-version-p").hide();
+			$("#change-blti-p").hide();
+			$("#change-page-p").hide();
+			$("#pagestuff").hide();
+			$("#newwindowstuff").hide();
+			$("#formatstuff").hide();
+			$("#edit-height").hide();
+			$("#prereqstuff").hide();
+			$("#editgroups").hide();
+			$("#resource-group-inherited").hide();
+			$("#assignment-points").hide();
+			$("#assignment-points-label").hide();
+			$("#edit-item").hide();
+			$("#name").val("Calendar");
+			$("#description").val($("#calendar-descrip").text());
+			$("#item-id").val(row.find(".calendar-item-id").text());
+			$("#edit-item-error-container").hide();
+			var position =  row.position();
+			$("#edit-item-dialog").dialog("option", "position", [position.left, position.top]);
+			oldloc = $(this);
+			$("#edit-item-dialog").dialog('open');
+			checksize($("#edit-item-dialog"));
+			return false;
+		});
 		$("#releaseDiv input").change(function(){
 			$("#page-releasedate").attr('checked', 'checked');
 		    });
