@@ -46,6 +46,7 @@ public interface SimplePageItem {
 	public static final int QUESTION = 11;
     public static final int BLTI = 12;
     public static final int PEEREVAL = 13;
+    public static final int CALENDAR = 17;
     //new SimplePageItem added to display latest forum posts in Lessons
     public static final int FORUM_SUMMARY = 15;
     //new SimplePageItem type added to display latest announcements in Lessons

@@ -438,6 +438,8 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 
 		if (params.addTool == GeneralViewParameters.COMMENTS) {
 			simplePageBean.addCommentsSection();
+		}else if(params.addTool == GeneralViewParameters.CALENDAR){
+			simplePageBean.addCalendar();
 		}else if(params.addTool == GeneralViewParameters.STUDENT_CONTENT) {
 			simplePageBean.addStudentContentSection();
 		}else if(params.addTool == GeneralViewParameters.STUDENT_PAGE) {
@@ -1083,7 +1085,7 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 						|| i.getType() == SimplePageItem.COMMENTS || i.getType() == SimplePageItem.STUDENT_CONTENT
 						|| i.getType() == SimplePageItem.QUESTION || i.getType() == SimplePageItem.PEEREVAL
 						|| i.getType() == SimplePageItem.FORUM_SUMMARY || i.getType() == SimplePageItem.TWITTER
-						|| i.getType() == SimplePageItem.ANNOUNCEMENTS);
+						|| i.getType() == SimplePageItem.ANNOUNCEMENTS || i.getType() == SimplePageItem.CALENDAR);
 				// (i.getType() == SimplePageItem.PAGE &&
 				// "button".equals(i.getFormat())))
 
@@ -1114,6 +1116,7 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 				case SimplePageItem.FORUM_SUMMARY: itemClassName = "forumSummary"; break;
 				case SimplePageItem.ANNOUNCEMENTS: itemClassName = "announcementsType"; break;
 				case SimplePageItem.TWITTER: itemClassName = "twitter"; break;
+				case SimplePageItem.CALENDAR: itemClassName = "calendar"; break;
 				}
 
 
@@ -2716,6 +2719,31 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 						UIOutput.make(tableRow, "twitter-td");
 						UILink.make(tableRow, "edit-twitter", messageLocator.getMessage("simplepage.editItem"), "").decorate(new UIFreeAttributeDecorator("title", messageLocator.getMessage("simplepage.edit-title.twitter")));
 					}
+				}else if(i.getType() == SimplePageItem.CALENDAR){
+					UIOutput.make(tableRow, "calendarSpan");
+					if (canSeeAll){
+						String itemGroupString = simplePageBean.getItemGroupString(i, null, true);
+						String itemGroupTitles = simplePageBean.getItemGroupTitles(itemGroupString, i);
+						if (itemGroupTitles != null) {
+							itemGroupTitles = "[" + itemGroupTitles + "]";
+						}
+						UIOutput.make(tableRow, "item-groups-titles-text", itemGroupTitles);
+					}
+					if(canSeeAll || simplePageBean.isItemAvailable(i)) {
+						UIVerbatim.make(tableRow, "content", (i.getHtml() == null ? "" : i.getHtml()));
+						//set url to get events for the calendar
+						UIOutput.make(tableRow, "site-events-url", myUrl() + "/direct/calendar/site/" + simplePageBean.getCurrentSiteId());
+						//set calendar tool url for more info of calendar event
+						UIOutput.make(tableRow, "event-tool-url", myUrl() + "/portal/directtool/" + simplePageBean.getCurrentTool(simplePageBean.CALENDAR_TOOL_ID) + "?eventReference=/calendar/event/" +simplePageBean.getCurrentSiteId() + "/main/");
+					}else {
+						UIComponent unavailableText = UIOutput.make(tableRow, "content", messageLocator.getMessage("simplepage.textItemUnavailable"));
+						unavailableText.decorate(new UIFreeAttributeDecorator("class", "disabled-text-item"));
+					}
+					if (canEditPage) {
+						UIOutput.make(tableRow, "calendar-td");
+						UIOutput.make(tableRow, "calendar-item-id", String.valueOf(i.getId()));
+						UILink.make(tableRow, "edit-calendar", messageLocator.getMessage("simplepage.editItem"), "").decorate(new UIFreeAttributeDecorator("title", messageLocator.getMessage("simplepage.edit-title.calendar")));
+					}
 				}else {
 					// remaining type must be a block of HTML
 					UIOutput.make(tableRow, "itemSpan");
@@ -3316,6 +3344,13 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 		    UIOutput.make(tofill, "assignment-li");
 		    createToolBarLink(AssignmentPickerProducer.VIEW_ID, tofill, "add-assignment", "simplepage.assignment", currentPage, "simplepage.assignment");
 
+		    //If Calendar tool is present in the site, add an option to configure calendar in Lessons
+		    if(simplePageBean.getCurrentTool(simplePageBean.CALENDAR_TOOL_ID) != null){
+		        GeneralViewParameters eParams = new GeneralViewParameters(VIEW_ID);
+		        eParams.addTool = GeneralViewParameters.CALENDAR;
+		        UIOutput.make(tofill, "calendar-li");
+		        UIInternalLink.make(tofill, "calendar-link", messageLocator.getMessage("simplepage.calendarLinkText"), eParams);
+		    }
 		    UIOutput.make(tofill, "quiz-li");
 		    createToolBarLink(QuizPickerProducer.VIEW_ID, tofill, "add-quiz", "simplepage.quiz", currentPage, "simplepage.quiz");
 
