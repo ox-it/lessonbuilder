@@ -3376,7 +3376,7 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 		    UIInternalLink.make(tofill, "add-content", messageLocator.getMessage("simplepage.add-student-content"), eParams).
 			decorate(new UITooltipDecorator(messageLocator.getMessage("simplepage.student-descrip")));
 
-			//Adding 'Embed twitter feed' component
+			//Adding 'Embed twitter timeline' component
 			UIOutput.make(tofill, "twitter-li");
 			UILink twitterLink = UIInternalLink.makeURL(tofill, "add-twitter", "#");
 		    // in case we're on an old system without current BLTI
