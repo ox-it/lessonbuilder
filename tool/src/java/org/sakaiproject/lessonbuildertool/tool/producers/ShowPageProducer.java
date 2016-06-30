@@ -2474,6 +2474,9 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 						UIOutput.make(tableRow, "announcements-site-url", myUrl() + "/direct/announcement/site/" + simplePageBean.getCurrentSiteId());
 						//setting this variable to redirect user to the particular announcement
 						UIOutput.make(tableRow, "announcements-view-url", myUrl() + "/portal/directtool/" + simplePageBean.getCurrentTool(simplePageBean.ANNOUNCEMENTS_TOOL_ID) + "?itemReference=/announcement/msg/" + simplePageBean.getCurrentSiteId() + "/main/");
+						//get numberOfAnnouncements for the widget
+						String numberOfAnnouncements = i.getAttribute("numberOfAnnouncements") != null ? i.getAttribute("numberOfAnnouncements") : "";
+						UIOutput.make(tableRow, "numberOfAnnouncements", numberOfAnnouncements);
 					}else{
 						UIComponent unavailableText = UIOutput.make(tableRow, "content", messageLocator.getMessage("simplepage.textItemUnavailable"));
 						unavailableText.decorate(new UIFreeAttributeDecorator("class", "disabled-text-item"));
