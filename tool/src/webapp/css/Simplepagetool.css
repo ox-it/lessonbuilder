@@ -1079,6 +1079,14 @@ color: #666;
 .calendar-div{
 width: 550px;
 }
+
+.eventAttachmentList{
+display: inline-table;
+}
+
+eventAttachmentItem{
+list-style-type: none;
+}
 .fc-event{
 cursor: pointer;
 margin-bottom: 6px; /*to add space between two events*/
