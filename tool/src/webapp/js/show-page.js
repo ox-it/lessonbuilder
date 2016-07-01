@@ -353,7 +353,7 @@ $(function() {
 			$('#announcementsEditId').val(itemId);
 			var height = row.find(".announcementsWidgetHeight").text().replace(/'/g,"");
 			$('#announcements-height').val(height);
-			var number = row.find("#numberOfAnnouncements").val();
+			var number = row.find(".numberOfAnnouncements").text();
 			$("#announcementsNumberDropdown-selection").val(number);
 			$('.edit-col').addClass('edit-colHidden');
 			$(this).closest('li').addClass('editInProgress');
