@@ -2680,6 +2680,9 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 						UIOutput.make(tableRow, "forum-summary-site-url", myUrl() + "/direct/forums/messages/" + simplePageBean.getCurrentSiteId());
 						//setting this variable to redirect user to the particular message in the forums tool
 						UIOutput.make(tableRow, "forum-summary-view-url", myUrl() + "/portal/directtool/" + simplePageBean.getCurrentTool(simplePageBean.FORUMS_TOOL_ID));
+						//get numberOfConversations for the widget
+						String numberOfConversations = i.getAttribute("numberOfConversations") != null ? i.getAttribute("numberOfConversations") : "" ;
+						UIOutput.make(tableRow, "numberOfConversations", numberOfConversations);
 					}else {
 						UIComponent unavailableText = UIOutput.make(tableRow, "content", messageLocator.getMessage("simplepage.textItemUnavailable"));
 						unavailableText.decorate(new UIFreeAttributeDecorator("class", "disabled-text-item"));
