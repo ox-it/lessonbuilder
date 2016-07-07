@@ -16,7 +16,8 @@ function showAnnouncements(url, tool_href, number, announcementsDiv){
 		var announcementsUrl = url + ".json?n=" + number;
 		//get the announcement tool url
 		var link_to_tool = tool_href.split("?", 1);
-		var text_for_announcements = '<div class="announcementsHeaderDiv"><h3 class="announcementSummaryHeader" style="border-bottom:1px solid #ccc;padding-bottom: 5px;"><a href="'+link_to_tool+'" target="_top" title ="Announcements">Announcements</a></h3></div>';
+		var title = msg("simplepage.announcements-header-title");
+		var text_for_announcements = '<div class="announcementsHeaderDiv"><h3 class="announcementSummaryHeader"><img alt="" class="item-image" src="/library/image/silk/flag_blue.png"><a href="'+link_to_tool+'" target="_top" class="announcementLink" title ="'+title+'">'+title+'</a></h3></div>';
 		//Get announcements
 		$.ajax({
 			url: announcementsUrl,
