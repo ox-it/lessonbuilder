@@ -54,7 +54,7 @@ function showForums(forumsUrl, toolHref, itemsToShow, forumSummaryDiv  ){
 }
 function outputForums(messagesArray, toolHref, forumSummaryDiv){
 	var title = msg("simplepage.forum-header-title");
-	var text_for_forums = '<div class="forumSummaryHeaderDiv"><h3 class="forumSummaryHeader"><a href="'+toolHref+'" class="forumSummaryLink" target="_top" title ="'+title+'">'+title+'</a></h3></div>';
+	var text_for_forums = '<div class="forumSummaryHeaderDiv"><h3 class="forumSummaryHeader"><img alt="" class="item-image" src="/library/image/silk/comments.png"><a href="'+toolHref+'" class="forumSummaryLink" title ="'+title+'">'+title+'</a></h3></div>';
 	if(messagesArray.length == 0){
 		text_for_forums += '<p>'+msg("simplepage.forum-summary-no-message")+'</p>';
 	}
@@ -69,8 +69,8 @@ function outputForums(messagesArray, toolHref, forumSummaryDiv){
 			var min = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
 			//using javascript's toLocaleDateString() to include user's locale and local time zone
 			var date_time = hour + ":" + min + " " + date.toLocaleDateString();
-			var href = toolHref + "/discussionForum/message/dfViewThreadDirect.jsf?messageId=" + messagesArray[i].messageId + "&topicId=" +messagesArray[i].topicId + "&forumId=" + messagesArray[i].forumId;
-			text_for_forums+='<li class="forumSummaryItem"><a href="'+href+'" target="_top">'+messagesArray[i].entityTitle+'</a> by '+messagesArray[i].author+'</br><span class="forumSummaryDate">'+date_time+'</span></li>';
+			var href = toolHref + "&messageId=" + messagesArray[i].messageId + "&topicId=" +messagesArray[i].topicId + "&forumId=" + messagesArray[i].forumId;
+			text_for_forums+='<li class="forumSummaryItem"><a href="'+href+'">'+messagesArray[i].entityTitle+'</a> by '+messagesArray[i].author+'</br><span class="forumSummaryDate">'+date_time+'</span></li>';
 		}
 		text_for_forums+='</ul>';
 	}

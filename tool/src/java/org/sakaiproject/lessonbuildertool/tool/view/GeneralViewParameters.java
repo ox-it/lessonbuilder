@@ -54,6 +54,10 @@ public class GeneralViewParameters extends SimpleViewParameters {
 	
 	public String author; // An author whose comments should be highlighted
 	public String placementId = null;
+	//variables added to display forum conversation inside Lessons tool
+	public String messageId = "";
+	public String topicId = "";
+	public String forumId = "";
 
 	public GeneralViewParameters() {
 		super();
@@ -186,6 +190,27 @@ public class GeneralViewParameters extends SimpleViewParameters {
 		return placementId;
 	}
 
+	public String getMessageId() {
+		return messageId;
+	}
 
+	public void setMessageId(String messageId) {
+		this.messageId = messageId;
+	}
 
+	public String getTopicId() {
+		return topicId;
+	}
+
+	public void setTopicId(String topicId) {
+		this.topicId = topicId;
+	}
+
+	public String getForumId() {
+		return forumId;
+	}
+
+	public void setForumId(String forumId) {
+		this.forumId = forumId;
+	}
 }

@@ -2678,8 +2678,9 @@ public class ShowPageProducer implements ViewComponentProducer, DefaultView, Nav
 						UIOutput.make(tableRow, "forum-summary-widget-height", height);
 						//setting forums-messages url to get all recent messages for the site
 						UIOutput.make(tableRow, "forum-summary-site-url", myUrl() + "/direct/forums/messages/" + simplePageBean.getCurrentSiteId());
-						//setting this variable to redirect user to the particular message in the forums tool
-						UIOutput.make(tableRow, "forum-summary-view-url", myUrl() + "/portal/directtool/" + simplePageBean.getCurrentTool(simplePageBean.FORUMS_TOOL_ID));
+						//setting the url such that request goes to ShowItemProducer to display forum conversations inside Lessons tool
+						UIOutput.make(tableRow, "forum-summary-view-url", myUrl() + "/portal/tool/" + placement.getId()
+								+"/" + ShowItemProducer.VIEW_ID + "?itemId=" +i.getId()+"&sendingPage="+currentPage.getPageId());
 						//get numberOfConversations for the widget
 						String numberOfConversations = i.getAttribute("numberOfConversations") != null ? i.getAttribute("numberOfConversations") : "" ;
 						UIOutput.make(tableRow, "numberOfConversations", numberOfConversations);

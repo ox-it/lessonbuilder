@@ -307,7 +307,17 @@ public class ShowItemProducer implements ViewComponentProducer, NavigationCaseRe
 		simplePageBean.addNextLink(tofill, item);
 	    }
 
-	    UIComponent iframe = UILink.make(tofill, "iframe1", params.getSource());
+		//check if item is of type Forum_Summary
+		String source;
+		if(item.getType() == SimplePageItem.FORUM_SUMMARY){
+			//get messageId, topicId and forumId from the parameters for the source url
+			source = myUrl()+ "/portal/tool/" + simplePageBean.getCurrentTool(simplePageBean.FORUMS_TOOL_ID)
+				+"/discussionForum/message/dfViewThreadDirect.jsf?&messageId=" + params.getMessageId()
+				+ "&topicId=" + params.getTopicId() + "&forumId=" + params.getForumId();
+		}else{
+			source = params.getSource();
+		}
+		UIComponent iframe = UILink.make(tofill, "iframe1", source);
 	    if (item != null && item.getType() == SimplePageItem.BLTI) {
 		String height = item.getHeight();
 		if (height == null || height.equals(""))
