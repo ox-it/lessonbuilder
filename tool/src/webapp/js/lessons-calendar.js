@@ -38,6 +38,7 @@ $(function(){
                                     icon: this["eventImage"],
                                     event_id: this["eventId"],
                                     attachments: this["attachments"],
+                                    eventReference: this["eventReference"],
                                     end: endDate
                                 });
                             });
@@ -76,7 +77,7 @@ $(function(){
             else{
                 $("#eventAttachmentsDiv").hide();
             }
-            var more_info = moreInfoUrl + event.event_id + "&panel=Main&sakai_action=doDescription&sakai.state.reset=true";
+            var more_info = moreInfoUrl + event.eventReference + "&panel=Main&sakai_action=doDescription&sakai.state.reset=true";
             var fullDetailsText = msg("simplepage.calendar-more-info");
             //when Full Details is clicked, event in the Calendar tool is shown.
             $("#fullDetails").html("<a href=" + more_info + " target=_top>" + fullDetailsText + "</a>");
